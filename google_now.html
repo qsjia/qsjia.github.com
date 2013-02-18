@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Google Now</title>
+	<style>
+		@keyframes x-spin {
+			0% { height: 130px;line-height: 150px;background-position:0 0;}
+			100% { height: 50px;line-height: 50px;background-position:0 -200px;}
+		}
+		@-webkit-keyframes x-spin {
+			0% { height: 130px;line-height: 150px;background-position:0 0;}
+			100% { height: 50px;line-height: 50px;background-position:0 -200px;}
+		}
+		@-moz-keyframes x-spin {
+			0% { height: 130px;line-height: 150px;background-position:0 0;}
+			100% { height: 50px;line-height: 50px;background-position:0 -200px;}
+		}
+		@keyframes x-box {
+			0% { top: 46px;}
+			100% { top: 16px;}
+		}
+		@-webkit-keyframes x-box {
+			0% { top: 46px;}
+			100% { top: 16px;}
+		}
+		@-moz-keyframes x-box {
+			0% { top: 46px;}
+			100% { top: 16px;}
+		}
+		html, body, div, ul, li{margin: 0; padding: 0;}
+		div.container{width: 300px;background-color: #efefef;}
+		div.header{text-align: center;background: url('http://www.madisonboom.com/wp-content/uploads/2011/05/Google-Search-Globe-300x150.jpg') no-repeat;}
+		div.header.big{height: 130px;text-align: center;line-height: 130px;}
+		div.header.small{height: 50px; line-height: 50px; animation: x-spin .3s; -webkit-animation: x-spin .3s; -moz-animation: x-spin .3s;background-position:0 -160px;}
+		input.searchBox{width: 230px;height: 26px;line-height: 26px;border: none;box-shadow: 2px 2px 5px #afafaf;-webkit-box-shadow: 2px 2px 5px #afafaf;-moz-box-shadow: 2px 2px 5px #afafaf;position: absolute; left: 33px;-webkit-appearance: none;border: solid 1px #ccc\9;
+			filter: progid:DXImageTransform.Microsoft.Shadow(color='#969696', Direction=135, Strength=4);}
+		input.searchBox.big{top: 46px;}
+		input.searchBox.small{ animation: x-box .3s; -webkit-animation: x-box .3s; -moz-animation: x-box .3s;top: 16px;}
+		li.item{display: block;height: 150px;background-color: #fff;margin: 7px; box-shadow: 1px 2px 2px #cccccc; -webkit-box-shadow: 1px 2px 2px #cccccc; -moz-box-shadow: 1px 2px 2px #cccccc;
+			filter: progid:DXImageTransform.Microsoft.Shadow(color='#969696', Direction=135, Strength=2);}
+	</style>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+<div class="container">
+	<div class="header big">
+		<div class="fixed">
+			<input class="searchBox big" type="search" placeholder="输入搜索查询" x-webkit-speech="x-webkit-speech">
+		</div>
+	</div>
+	<ul class="items">
+		<li class="item">
+			<div class="i"></div>
+		</li>
+		<li class="item">
+			<div class="i"></div>
+		</li>
+		<li class="item">
+			<div class="i"></div>
+		</li>
+		<li class="item">
+			<div class="i"></div>
+		</li>
+		<li class="item">
+			<div class="i"></div>
+		</li>
+	</ul>
+</div>
+<script type="text/javascript">
+	$(function(){
+		var $searchBox = $('.searchBox');
+		var $searchHeader = $('div.header');
+		var originalTop = $searchBox[0].offsetTop;
+		var onClick = function(){
+			if($searchHeader.hasClass('big')){
+				$searchHeader.removeClass('big').addClass('small');
+				$searchBox.removeAttr('style').removeClass('big').addClass('small');
+			}else{
+				$searchBox.removeAttr('style');
+			}
+			originalTop = $searchBox.hasClass('big')?46:16;
+			if((document.body.scrollTop||document.documentElement.scrollTop)>0){
+				$("html,body").animate({ scrollTop: 0 }, 300);
+			}
+		};
+		var lastScrollTop = 0;
+		var lastDirection = 'down';
+		var onScroll = function(event){
+			var scrollTop = document.body.scrollTop||document.documentElement.scrollTop;
+			if(scrollTop>lastScrollTop){ //向下滚动
+				if(lastDirection = 'up'){ //方向改变
+					lastDirection = 'down'
+				}
+			}else{ //向上滚动
+				if(lastDirection == 'down'){ //方向改变
+					if($searchBox[0].offsetTop-scrollTop+$searchBox[0].offsetHeight<0){ //当前不可见
+						$searchBox.css('top', scrollTop-26+'px');
+					}
+					lastDirection = 'up';
+				}else{
+					if($searchBox[0].offsetTop-scrollTop>=6){
+						if(scrollTop!=0 && $searchBox[0].offsetTop>originalTop){
+							$searchBox.css('top', scrollTop+6+'px');
+						}
+						if($searchBox[0].offsetTop<originalTop){
+							$searchBox.css('top', originalTop+'px');
+						}
+					}
+				}
+			}
+			lastScrollTop = scrollTop;
+		}
+
+		$searchBox.on('click', onClick);
+		$(window).on('scroll', onScroll);
+	});
+</script>
+</body>
+</html>
